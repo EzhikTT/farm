@@ -1,0 +1,33 @@
+div.background {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100vw;
+    height: 100vh;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    background-color: rgba(0,0,0,.1);
+}
+div.background.hidden {
+    display: none;
+}
+div.background > div.popup {
+    padding: 10px;
+    background-color: white;
+    border-radius: 5px;
+}
+div.background > div.popup > footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+}
+div.background > div.popup > footer > button:first-child {
+    color: red;
+}
+div.background > div.popup > footer > button:last-child {
+    color: greenyellow;
+}

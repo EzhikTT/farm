@@ -1,0 +1,22 @@
+div.select {
+    width: 300px;
+}
+div.select > div.main {
+    padding: 10px;
+    border: 1px solid black;
+}
+div.select > div.list.hidden {
+    display: none;
+}
+div.select > div.list {
+    border: 1px solid black;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+div.select > div.list > div {
+    padding: 10px;
+    cursor: pointer;
+}
+div.select > div.list > div:not(:last-child) {
+    border-bottom: 1px solid black;
+}

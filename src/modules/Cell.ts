@@ -1,9 +1,34 @@
-export default class CellVegetable {}
+export enum TypeVegetables {
+    EMPTY,
+    TOMATO,
+    POTATO,
+    CUCUMBER,
+    CARROT,
+    BLOCK
+}
 
-export class Tomato extends CellVegetable {}
-export class Potato extends CellVegetable {}
-export class Cucumber extends CellVegetable {}
-export class Carrot extends CellVegetable {}
+export default class CellVegetable {
+    readonly type: TypeVegetables = TypeVegetables.EMPTY
+    readonly expired: number = 0
+}
 
-const c = new Carrot()
-c instanceof Carrot
+export class Tomato extends CellVegetable {
+    readonly type: TypeVegetables = TypeVegetables.TOMATO
+    readonly expired: number = 3
+}
+export class Potato extends CellVegetable {
+    readonly type: TypeVegetables = TypeVegetables.POTATO
+    readonly expired: number = 5
+}
+export class Cucumber extends CellVegetable {
+    readonly type: TypeVegetables = TypeVegetables.CUCUMBER
+    readonly expired: number = 7
+}
+export class Carrot extends CellVegetable {
+    readonly type: TypeVegetables = TypeVegetables.CARROT
+    readonly expired: number = 2
+}
+
+export class BlockCell extends CellVegetable {
+    readonly type: TypeVegetables = TypeVegetables.BLOCK
+}
