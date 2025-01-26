@@ -1,7 +1,23 @@
 import CellVegetable, { BlockCell, Carrot, Cucumber, Potato, Tomato, TypeVegetables } from "./Cell"
 
+type Seed = {
+   [n: number]: string 
+} // type Seeds
+
 export default class FieldVegetables {
     private cells: CellVegetable[] = []
+
+    // [].map((i) => {
+    //     const t = 0
+
+    //     return {}
+    // })
+
+    // private seeds: Seed[] = [
+    //     {
+    //         [TypeVegetables.BLOCK]: "some string"
+    //     }
+    // ]
 
     get field() {
         return [...this.cells]
@@ -27,7 +43,8 @@ export default class FieldVegetables {
             (
                 this.cells[index].type === TypeVegetables.EMPTY || 
                 this.cells[index].type === TypeVegetables.BLOCK
-            )){
+            )
+        ){
             switch(type){
                 case TypeVegetables.TOMATO:
                     this.cells[index] = new Tomato()
@@ -50,6 +67,6 @@ export default class FieldVegetables {
     }
 }
 
-const c = new FieldVegetables(10)
+// const c = new FieldVegetables(10)
 
 // c.createField()
