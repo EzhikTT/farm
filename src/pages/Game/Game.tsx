@@ -1,4 +1,4 @@
-import React, { use, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import FieldVegetables from "../../modules/Field";
 import './Game.css'
 import CellVegetable, { TypeVegetables } from "../../modules/Cell";
@@ -55,6 +55,25 @@ const Game = () => {
     const [type, setType] = useState<TypeVegetables>(TypeVegetables.EMPTY)
     const [showPopup, setShowPopup] = useState(false)
     const [isBlockCell, setIsBlockCell] = useState(false)
+
+    useEffect(
+        () => {
+            const intervalId = setInterval(
+                () => {
+                    for(const cell of field.cells){
+                        cell.incStage()
+                    }
+                    setCells(field.field)
+                },
+                1000
+            )
+
+            return () => {
+                clearInterval(intervalId)
+            }
+        },
+        []
+    )
 
     const updateItems = () => {
         const newItems = [...items]
@@ -113,7 +132,8 @@ const Game = () => {
                 {cells.map((cell, index) => (
                     <div className="cell" 
                          onClick={() => onClick(index)}
-                         style={{backgroundColor: colors[cell.type]}}>
+                         style={{backgroundColor: cell.color}}>
+                            {cell.currentStage}
                     </div>
                 ))}
             </section>

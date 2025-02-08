@@ -5,7 +5,7 @@ type Seeds = {
 } // type Seeds
 
 export default class FieldVegetables {
-    private cells: CellVegetable[] = []
+    private _cells: CellVegetable[] = []
 
     // [].map((i) => {
     //     const t = 0
@@ -32,7 +32,11 @@ export default class FieldVegetables {
     }
 
     get field() {
-        return [...this.cells]
+        return [...this._cells]
+    }
+
+    get cells() {
+        return this._cells
     }
 
     constructor(size: number){
@@ -42,40 +46,40 @@ export default class FieldVegetables {
     private createField(size: number){
         for(let i = 0; i < size; i++){
             if(i % (size / 2) > (size / 2 / 2 - 1)){ // i % 8 > 4
-                this.cells.push(new BlockCell())
+                this._cells.push(new BlockCell())
             }
             else {
-                this.cells.push(new CellVegetable())
+                this._cells.push(new CellVegetable())
             }
         }
     }
 
     seed(type: TypeVegetables, index: number){
         if(
-            this.cells[index] && 
+            this._cells[index] && 
             (
-                this.cells[index].type === TypeVegetables.EMPTY || 
-                this.cells[index].type === TypeVegetables.BLOCK
+                this._cells[index].type === TypeVegetables.EMPTY || 
+                this._cells[index].type === TypeVegetables.BLOCK
             )
         ){
             if(
                 type && 
                 type !== TypeVegetables.BLOCK && 
-                this.cells[index].type !== TypeVegetables.BLOCK
+                this._cells[index].type !== TypeVegetables.BLOCK
             ){
                 if(this._seeds[type] > 0){
                     switch(type){
                         case TypeVegetables.TOMATO:
-                            this.cells[index] = new Tomato()
+                            this._cells[index] = new Tomato()
                             break;
                         case TypeVegetables.POTATO:
-                            this.cells[index] = new Potato()
+                            this._cells[index] = new Potato()
                             break;
                         case TypeVegetables.CUCUMBER:
-                            this.cells[index] = new Cucumber()
+                            this._cells[index] = new Cucumber()
                             break;
                         case TypeVegetables.CARROT:
-                            this.cells[index] = new Carrot()
+                            this._cells[index] = new Carrot()
                             break;
                     } 
                     this._seeds[type]--
@@ -86,9 +90,9 @@ export default class FieldVegetables {
                     type === undefined ||
                     type === TypeVegetables.BLOCK
                 ) && 
-                this.cells[index].type === TypeVegetables.BLOCK
+                this._cells[index].type === TypeVegetables.BLOCK
             ){
-                this.cells[index] = new CellVegetable()
+                this._cells[index] = new CellVegetable()
             }
         }
     }
