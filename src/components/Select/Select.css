@@ -15,7 +15,12 @@ div.select > div.list {
 }
 div.select > div.list > div {
     padding: 10px;
+}
+div.select > div.list > div:not(.disabled) {
     cursor: pointer;
+}
+div.select > div.list > div.disabled {
+    background-color: grey;
 }
 div.select > div.list > div:not(:last-child) {
     border-bottom: 1px solid black;

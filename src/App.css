@@ -5,3 +5,18 @@ div#root > div.main {
 
   border: 1px solid black;
 }
+
+div#root main.stub {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+div#root main.stub > span {
+  cursor: pointer;
+  margin-top: 5px;
+  font-size: 22px;
+  font-weight: 700;
+}

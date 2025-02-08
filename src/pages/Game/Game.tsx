@@ -16,14 +16,39 @@ const colors = {
     [TypeVegetables.BLOCK]: "black",
 }
 
+const names = {
+    [TypeVegetables.CARROT]: "Морковь",
+    [TypeVegetables.TOMATO]: "Томат",
+    [TypeVegetables.POTATO]: "Картофель",
+    [TypeVegetables.CUCUMBER]: "Огурец",
+    [TypeVegetables.EMPTY]: "",
+    [TypeVegetables.BLOCK]: "",
+}
+
 const Game = () => {
     
-    const items = [
-        {label: "Морковь", value: TypeVegetables.CARROT},
-        {label: "Томат", value: TypeVegetables.TOMATO},
-        {label: "Картофель", value: TypeVegetables.POTATO},
-        {label: "Огурец", value: TypeVegetables.CUCUMBER},
-    ]
+    const [items, setItems] = useState([
+        {
+            label: `Морковь - x${field.seeds[TypeVegetables.CARROT]}`, 
+            value: TypeVegetables.CARROT, 
+            disabled: field.seeds[TypeVegetables.CARROT] <= 0
+        },
+        {
+            label: <span>Томат - x{field.seeds[TypeVegetables.TOMATO]}</span>, 
+            value: TypeVegetables.TOMATO, 
+            disabled: field.seeds[TypeVegetables.TOMATO] <= 0
+        },
+        {
+            label: <span>Картофель - x{field.seeds[TypeVegetables.POTATO]}</span>, 
+            value: TypeVegetables.POTATO, 
+            disabled: field.seeds[TypeVegetables.POTATO] <= 0
+        },
+        {
+            label: `Огурец - x${field.seeds[TypeVegetables.CUCUMBER]}`, 
+            value: TypeVegetables.CUCUMBER, 
+            disabled: field.seeds[TypeVegetables.CUCUMBER] <= 0
+        },
+    ])
 
     const [cells, setCells] = useState<CellVegetable[]>(field.field)
     const [index, setIndex] = useState(-1)
@@ -31,9 +56,19 @@ const Game = () => {
     const [showPopup, setShowPopup] = useState(false)
     const [isBlockCell, setIsBlockCell] = useState(false)
 
+    const updateItems = () => {
+        const newItems = [...items]
+        for(const item of newItems){
+            item.label = <span>{names[item.value]} - x{field.seeds[item.value]}</span>
+            item.disabled = field.seeds[item.value] <= 0
+        }
+        setItems(newItems)
+    }
+
     const onSeed = () => {
         field.seed(type, index)
         setCells(field.field)
+        updateItems()
     }
 
     const onSelect = (value: TypeVegetables) => {
@@ -73,8 +108,8 @@ const Game = () => {
     }
 
     return (
-        <main>
-            <section>
+        <main className="game">
+            <section className="field">
                 {cells.map((cell, index) => (
                     <div className="cell" 
                          onClick={() => onClick(index)}
@@ -82,6 +117,11 @@ const Game = () => {
                     </div>
                 ))}
             </section>
+
+            <section className="dog"></section>
+            <section className="animal"></section>
+            <section className="house"></section>
+            <section className="farmer"></section>
 
             <Popup isShow={showPopup} onCancel={onCancel} onSubmit={onSubmit}>
                 {
