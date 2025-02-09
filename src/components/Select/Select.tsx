@@ -17,14 +17,14 @@ const Select = (props: Props) => {
     const [value, setValue] = useState()
     const [label, setLabel] = useState<string | React.ReactNode>("")
 
-    useEffect(
-        () => {
-            setValue(undefined)
-            setLabel("")
-            setShow(false)
-        },
-        [props.items]
-    )
+    // useEffect(
+    //     () => {
+    //         setValue(undefined)
+    //         setLabel("")
+    //         setShow(false)
+    //     },
+    //     [props.items]
+    // )
 
     useEffect(
         () => {

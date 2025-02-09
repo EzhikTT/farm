@@ -1,11 +1,13 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import FieldVegetables from "../../modules/Field";
 import './Game.css'
 import CellVegetable, { TypeVegetables } from "../../modules/Cell";
 import Popup from "../../components/Popup/Popup";
 import Select from "../../components/Select/Select";
+import { Animal, Animals, Yard } from "../../modules/Animal";
 
 const field = new FieldVegetables(16)
+const yard = new Yard()
 
 const colors = {
     [TypeVegetables.EMPTY]: "white",
@@ -16,6 +18,12 @@ const colors = {
     [TypeVegetables.BLOCK]: "black",
 }
 
+const animalClasses = {
+    [Animals.COW]: "cow",
+    [Animals.PIG]: "pig",
+    [Animals.ANIMAL]: ""
+}
+
 const names = {
     [TypeVegetables.CARROT]: "Морковь",
     [TypeVegetables.TOMATO]: "Томат",
@@ -23,6 +31,11 @@ const names = {
     [TypeVegetables.CUCUMBER]: "Огурец",
     [TypeVegetables.EMPTY]: "",
     [TypeVegetables.BLOCK]: "",
+}
+
+enum Type {
+    VEGETABLES = "vegetables",
+    ANIMALS = "animals"
 }
 
 const Game = () => {
@@ -50,11 +63,26 @@ const Game = () => {
         },
     ])
 
+    const itemsAnimals = [
+        {
+            label: "Корова",
+            value: Animals.COW
+        },
+        {
+            label: "Свинья",
+            value: Animals.PIG
+        },
+    ]
+
     const [cells, setCells] = useState<CellVegetable[]>(field.field)
     const [index, setIndex] = useState(-1)
     const [type, setType] = useState<TypeVegetables>(TypeVegetables.EMPTY)
     const [showPopup, setShowPopup] = useState(false)
     const [isBlockCell, setIsBlockCell] = useState(false)
+
+    const [animals, setAnimals] = useState<Animal[]>(yard.newAnimals)
+    const [animal, setAnimal] = useState<Animals>(Animals.ANIMAL)
+    const [typePopup, setTypePopup] = useState<Type>() 
 
     useEffect(
         () => {
@@ -90,13 +118,24 @@ const Game = () => {
         updateItems()
     }
 
+    const onAddAnimal = () => {
+        yard.addAnimal(animal)
+        setAnimals(yard.newAnimals)
+    }
+
     const onSelect = (value: TypeVegetables) => {
         setType(value)
     }
 
     const onClick = (index: number) => {
+        setTypePopup(Type.VEGETABLES)
         setIsBlockCell(cells[index].type === TypeVegetables.BLOCK)
         setIndex(index)
+        setShowPopup(true)
+    }
+
+    const onClickYard = () => {
+        setTypePopup(Type.ANIMALS)
         setShowPopup(true)
     }
 
@@ -105,7 +144,13 @@ const Game = () => {
     }
     const onSubmit = () => {
         setShowPopup(false)
-        onSeed()
+
+        if(typePopup === Type.VEGETABLES){
+            onSeed()
+        }
+        else if(typePopup === Type.ANIMALS){
+            onAddAnimal()
+        }
     }
 
     const popupSeedBody = () => {
@@ -126,6 +171,30 @@ const Game = () => {
         )
     }
 
+    const onSelectAnimal = (value: Animals) => {
+        setAnimal(value)
+    }
+
+    const popupAnimalBody = () => {
+        return (
+            <>
+                <h2>Выбери своего зверя</h2>
+                <div>
+                    <Select items={itemsAnimals} onSelect={onSelectAnimal}/>
+                </div>
+            </>
+        )
+    }
+
+    const popupBody = () => {
+        switch(typePopup){
+            case Type.ANIMALS:
+                return popupAnimalBody()
+            case Type.VEGETABLES:
+                return isBlockCell ? popupBlockBody() : popupSeedBody()
+        }
+    }
+
     return (
         <main className="game">
             <section className="field">
@@ -139,14 +208,14 @@ const Game = () => {
             </section>
 
             <section className="dog"></section>
-            <section className="animal"></section>
+            <section className="yard" onClick={onClickYard}>
+                {animals.map(animal => <div className={`animal ${animalClasses[animal.type]}`}></div>)}
+            </section>
             <section className="house"></section>
             <section className="farmer"></section>
 
             <Popup isShow={showPopup} onCancel={onCancel} onSubmit={onSubmit}>
-                {
-                    isBlockCell ? popupBlockBody() : popupSeedBody() 
-                }
+                {popupBody()}
             </Popup>
         </main>
     )
