@@ -1,12 +1,16 @@
 export class Yard {
-    private animals: any[] = []
-    private feed: any[] = []
+    private animals: Animal[] = []
+    private feed: Food[] = [new Grass(), new Grass(), new Apple(), new Apple()]
     private maxCount: number = 3
     private health: number = 100
     private preyes: Prey[] = []
 
     get newAnimals(){
         return [...this.animals]
+    }
+
+    get newFeed(){
+        return [...this.feed]
     }
 
     constructor(){
@@ -32,7 +36,18 @@ export class Yard {
     }
     addFeed(feed: any){}
     dilapidation(){} // обветшание
-    feeding(){}
+    feeding(){
+        for(const animal of this.animals){
+            let isFeed = false
+            for(let i = 0; i < this.feed.length && !isFeed; i++){
+                isFeed = animal.feed(this.feed[i])
+
+                if(isFeed){
+                    this.feed.splice(i, 1)
+                }
+            }
+        }
+    }
     growingUp(){// взросление
         for(const animal of this.animals){
             animal.growingUp()
@@ -66,11 +81,11 @@ export enum Animals {
 export class Animal {
     protected health: number = 0
     readonly type: Animals = Animals.ANIMAL
-    protected satiety: number = 0
+    protected readonly satietyLevel: number = 0
     protected _prey: Prey[] = []
     protected age: number = 0
     protected readonly maxAge: number = 0
-    readonly eatTypes: any[] = []
+    readonly eatTypes: FoodType[] = []
 
     get prey(){
         return this._prey
@@ -89,17 +104,34 @@ export class Animal {
     isDead(){
         return this.health <= 0 || this.age >= this.maxAge
     }
+
+    feed(food: Food): boolean {
+        const foodType = this.eatTypes.findIndex((v) => v === food.type)
+
+        if(foodType !== -1){
+            if(this.health <= this.satietyLevel){
+                this.health += food.health
+                return true
+            }
+        }
+
+        return false
+    }
 }
 
 class Pig extends Animal {
     readonly type: Animals = Animals.PIG
     protected health: number = 100
     protected readonly maxAge: number = 5
+    readonly eatTypes: FoodType[] = [FoodType.APPLE]
+    protected readonly satietyLevel: number = 60
 }
 class Cow extends Animal {
     readonly type: Animals = Animals.COW
     protected health: number = 100
     protected readonly maxAge: number = 10
+    readonly eatTypes: FoodType[] = [FoodType.GRASS]
+    protected readonly satietyLevel: number = 70
 }
 
 class Prey {}
@@ -109,5 +141,21 @@ class Poop extends Prey {}
 class Leather extends Prey {}
 class Blood extends Prey {}
 
-class Food {}
-class Grass extends Food {}
+export enum FoodType {
+    GRASS,
+    APPLE,
+    FOOD
+}
+
+export class Food {
+    readonly type: FoodType = FoodType.FOOD
+    readonly health: number = 0
+}
+class Grass extends Food {
+    readonly type: FoodType = FoodType.GRASS
+    readonly health: number = 10
+}
+class Apple extends Food {
+    readonly type: FoodType = FoodType.APPLE
+    readonly health: number = 15
+}

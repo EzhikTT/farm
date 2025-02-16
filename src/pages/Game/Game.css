@@ -39,15 +39,33 @@ main.game > section.yard {
     display: flex;
     align-items: center;
 }
-main.game > section.yard > div.pig {
+main.game > section.yard > div.animals {
+    display: flex;
+    align-items: center;
+}
+main.game > section.yard > div.animals > div.pig {
     width: 50px;
     height: 50px;
     background-color: pink;
 }
-main.game > section.yard > div.cow {
+main.game > section.yard > div.animals > div.cow {
     width: 50px;
     height: 50px;
     background-color: brown;
+}
+main.game > section.yard > div.food {
+    display: flex;
+    align-items: center;
+}
+main.game > section.yard > div.food > div.grass {
+    width: 25px;
+    height: 25px;
+    background-color: greenyellow;
+}
+main.game > section.yard > div.food > div.apple {
+    width: 25px;
+    height: 25px;
+    background-color: red;
 }
 
 main.game > section.house {

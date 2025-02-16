@@ -4,7 +4,7 @@ import './Game.css'
 import CellVegetable, { TypeVegetables } from "../../modules/Cell";
 import Popup from "../../components/Popup/Popup";
 import Select from "../../components/Select/Select";
-import { Animal, Animals, Yard } from "../../modules/Animal";
+import { Animal, Animals, Food, FoodType, Yard } from "../../modules/Animal";
 
 const field = new FieldVegetables(16)
 const yard = new Yard()
@@ -24,6 +24,12 @@ const animalClasses = {
     [Animals.ANIMAL]: ""
 }
 
+const foodClasses = {
+    [FoodType.GRASS]: "grass",
+    [FoodType.APPLE]: "apple",
+    [FoodType.FOOD]: ""
+}
+
 const names = {
     [TypeVegetables.CARROT]: "Морковь",
     [TypeVegetables.TOMATO]: "Томат",
@@ -35,7 +41,14 @@ const names = {
 
 enum Type {
     VEGETABLES = "vegetables",
-    ANIMALS = "animals"
+    ANIMALS = "animals",
+    FOOD = "feed",
+    AOF = "aof"
+}
+
+enum Tabs {
+    FOOD,
+    ANIMALS
 }
 
 const Game = () => {
@@ -74,6 +87,17 @@ const Game = () => {
         },
     ]
 
+    const itemsFood = [
+        {
+            label: "Трава",
+            value: FoodType.GRASS
+        },
+        {
+            label: "Яблоко",
+            value: FoodType.APPLE
+        },
+    ]
+
     const [cells, setCells] = useState<CellVegetable[]>(field.field)
     const [index, setIndex] = useState(-1)
     const [type, setType] = useState<TypeVegetables>(TypeVegetables.EMPTY)
@@ -84,6 +108,10 @@ const Game = () => {
     const [animal, setAnimal] = useState<Animals>(Animals.ANIMAL)
     const [typePopup, setTypePopup] = useState<Type>() 
 
+    const [food, setFood] = useState<Food[]>(yard.newFeed)
+    const [feed, setFeed] = useState<FoodType>(FoodType.FOOD)
+    const [activeTab, setActiveTab] = useState<Tabs | undefined>()
+
     useEffect(
         () => {
             const intervalId = setInterval(
@@ -91,10 +119,12 @@ const Game = () => {
                     for(const cell of field.cells){
                         cell.incStage()
                     }
+                    yard.feeding()
                     yard.getHungry()
                     
                     setCells(field.field)
                     setAnimals(yard.newAnimals)
+                    setFood(yard.newFeed)
                 },
                 1000
             )
@@ -106,22 +136,22 @@ const Game = () => {
         []
     )
 
-    useEffect(
-        () => {
-            const intervalId = setInterval(
-                () => {
-                    yard.growingUp()
-                    setAnimals(yard.newAnimals)
-                },
-                10000
-            )
+    // useEffect(
+    //     () => {
+    //         const intervalId = setInterval(
+    //             () => {
+    //                 yard.growingUp()
+    //                 setAnimals(yard.newAnimals)
+    //             },
+    //             10000
+    //         )
 
-            return () => {
-                clearInterval(intervalId)
-            }
-        },
-        []
-    )
+    //         return () => {
+    //             clearInterval(intervalId)
+    //         }
+    //     },
+    //     []
+    // )
 
     const updateItems = () => {
         const newItems = [...items]
@@ -155,7 +185,7 @@ const Game = () => {
     }
 
     const onClickYard = () => {
-        setTypePopup(Type.ANIMALS)
+        setTypePopup(Type.AOF)
         setShowPopup(true)
     }
 
@@ -164,6 +194,7 @@ const Game = () => {
     }
     const onSubmit = () => {
         setShowPopup(false)
+        setActiveTab(undefined)
 
         if(typePopup === Type.VEGETABLES){
             onSeed()
@@ -195,6 +226,10 @@ const Game = () => {
         setAnimal(value)
     }
 
+    const onSelectFeed = (value: FoodType) => {
+        setFeed(value)
+    }
+
     const popupAnimalBody = () => {
         return (
             <>
@@ -206,10 +241,50 @@ const Game = () => {
         )
     }
 
-    const popupBody = () => {
+    const popupAnimalOrFoodBody = () => {
+        let title = ""
         switch(typePopup){
             case Type.ANIMALS:
-                return popupAnimalBody()
+                title = "Выбери своего зверя"
+                break;
+            case Type.FOOD:
+                title = "Какой еды добавить?"
+                break;
+        }
+
+        return (
+            <>
+                {title && <h2>{title}</h2>}
+                <div className="tabs">
+                    <div className={activeTab === Tabs.FOOD ? "active" : ""} onClick={() => changeTab(Tabs.FOOD)}>Feed</div>
+                    <div className={activeTab === Tabs.ANIMALS ? "active" : ""} onClick={() => changeTab(Tabs.ANIMALS)}>Animals</div>
+                </div>
+                <div className="tab-content">
+                    {activeTab === Tabs.ANIMALS && <Select items={itemsAnimals} onSelect={onSelectAnimal}/>}
+                    {activeTab === Tabs.FOOD && <Select items={itemsFood} onSelect={onSelectFeed}/>}
+                </div>
+            </>
+        )
+    }
+
+    const changeTab = (tab: Tabs) => {
+        setActiveTab(tab)
+        switch(tab){
+            case Tabs.ANIMALS:
+                setTypePopup(Type.ANIMALS)
+                break
+            case Tabs.FOOD:
+                setTypePopup(Type.FOOD)
+                break
+        }
+    }
+
+    const popupBody = () => {
+        switch(typePopup){
+            case Type.AOF:
+            case Type.ANIMALS:
+            case Type.FOOD:
+                return popupAnimalOrFoodBody()
             case Type.VEGETABLES:
                 return isBlockCell ? popupBlockBody() : popupSeedBody()
         }
@@ -229,7 +304,12 @@ const Game = () => {
 
             <section className="dog"></section>
             <section className="yard" onClick={onClickYard}>
-                {animals.map(animal => <div className={`animal ${animalClasses[animal.type]}`}></div>)}
+                <div className="animals">
+                    {animals.map(animal => <div className={`animal ${animalClasses[animal.type]}`}></div>)}
+                </div>
+                <div className="food">
+                    {food.map(food => <div className={`food ${foodClasses[food.type]}`}></div>)}
+                </div>
             </section>
             <section className="house"></section>
             <section className="farmer"></section>
