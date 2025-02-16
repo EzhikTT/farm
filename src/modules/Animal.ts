@@ -3,6 +3,7 @@ export class Yard {
     private feed: any[] = []
     private maxCount: number = 3
     private health: number = 100
+    private preyes: Prey[] = []
 
     get newAnimals(){
         return [...this.animals]
@@ -32,8 +33,28 @@ export class Yard {
     addFeed(feed: any){}
     dilapidation(){} // обветшание
     feeding(){}
-    growingUp(){} // взросление
+    growingUp(){// взросление
+        for(const animal of this.animals){
+            animal.growingUp()
+        }
+        this.removeDeadAnimals()
+    } 
     killAnimal(idAnimal: number){}
+    getHungry(){
+        for(const animal of this.animals){
+            animal.getHungry()
+        }
+        this.removeDeadAnimals()
+    }
+    private removeDeadAnimals(){
+        for(let i = 0; i < this.animals.length; i++){
+            if(this.animals[i].isDead()){
+                this.preyes.push(...this.animals[i].prey)
+                this.animals.splice(i, 1)
+                i--
+            }
+        }
+    }
 }
 
 export enum Animals {
@@ -46,9 +67,28 @@ export class Animal {
     protected health: number = 0
     readonly type: Animals = Animals.ANIMAL
     protected satiety: number = 0
-    protected prey: any = 0
+    protected _prey: Prey[] = []
     protected age: number = 0
     protected readonly maxAge: number = 0
+    readonly eatTypes: any[] = []
+
+    get prey(){
+        return this._prey
+    }
+
+    getHungry(){
+        if(this.health > 0){
+            this.health -= 10
+        }
+    }
+    growingUp(){
+        if(this.age < this.maxAge){
+            this.age++
+        }
+    }
+    isDead(){
+        return this.health <= 0 || this.age >= this.maxAge
+    }
 }
 
 class Pig extends Animal {
@@ -68,3 +108,6 @@ class Meat extends Prey {}
 class Poop extends Prey {}
 class Leather extends Prey {}
 class Blood extends Prey {}
+
+class Food {}
+class Grass extends Food {}

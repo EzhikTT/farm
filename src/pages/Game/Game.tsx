@@ -91,9 +91,29 @@ const Game = () => {
                     for(const cell of field.cells){
                         cell.incStage()
                     }
+                    yard.getHungry()
+                    
                     setCells(field.field)
+                    setAnimals(yard.newAnimals)
                 },
                 1000
+            )
+
+            return () => {
+                clearInterval(intervalId)
+            }
+        },
+        []
+    )
+
+    useEffect(
+        () => {
+            const intervalId = setInterval(
+                () => {
+                    yard.growingUp()
+                    setAnimals(yard.newAnimals)
+                },
+                10000
             )
 
             return () => {
