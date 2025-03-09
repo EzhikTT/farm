@@ -114,6 +114,9 @@ const Game = () => {
 
     useEffect(
         () => {
+
+            getDataVegetables2()
+
             const intervalId = setInterval(
                 () => {
                     for(const cell of field.cells){
@@ -135,6 +138,21 @@ const Game = () => {
         },
         []
     )
+
+    const getDataVegetables = () => {
+        fetch("http://localhost:3434/vegetables").then(result => {
+            return result.json()
+        }).then(res => {
+            console.log("res fetch", res)
+            setItems(res)
+        })
+    }
+
+    const getDataVegetables2 = async () => {
+        const result = await fetch("http://localhost:3434/vegetables")
+        const res = await result.json()
+        setItems(res)
+    }
 
     // useEffect(
     //     () => {
